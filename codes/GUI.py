@@ -228,6 +228,10 @@ class CanteenInterface:
         bottom_frame = ctk.CTkFrame(pos_window, fg_color="transparent")
         bottom_frame.pack(fill='x', padx=20, pady=20)
 
+        btn_clear_cart = ctk.CTkButton(bottom_frame, text = "Clear Cart", command = self.clear_cart, height = 40,
+                                       fg_color = "#FFA000", hover_color="#FFB300")
+        btn_clear_cart.pack(side=tk.LEFT, padx = 10)
+
         btn_reduce_qty = ctk.CTkButton(bottom_frame, text="Reduce Quantity", command=self.remove_from_cart, height=40,
                                        fg_color="#D32F2F", hover_color="#B71C1C")
         btn_reduce_qty.pack(side=tk.LEFT, padx=10)
@@ -321,6 +325,15 @@ class CanteenInterface:
         self.cart.clear()
         self.refresh_cart()
         self.ent_barcode.focus_set()
+
+    def clear_cart(self):
+        if not self.cart:
+            tkinter.messagebox.showinfo("Info", "Cart is already empty.")
+            return
+        are_you_sure = tkinter.messagebox.askyesno("Clear Cart", "Are you sure you want to clear your cart?")
+        if are_you_sure:
+            self.cart.clear()
+            self.refresh_cart()
 
     def list_products_interface(self):
         product_list_window = ctk.CTkToplevel(self.master)
