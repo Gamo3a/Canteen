@@ -154,12 +154,12 @@ class CanteenInterface:
             for i in report_tree.get_children(): report_tree.delete(i)
             start_date = cal_start.get_date().strftime('%Y-%m-%d')
             end_date = cal_end.get_date().strftime('%Y-%m-%d')
-            results = get_product_based_report_db(start_date, end_date)
-
-            if isinstance(results, str) and results.startswith("HATA"):  # "HATA" is Turkish, changing to "ERROR"
-                tkinter.messagebox.showerror("Database Error",
-                                             f"Could not retrieve report.\n\nDetails: {results}\n\nPlease ensure your SQLite version is up-to-date.")
-                return
+            try:
+                results = get_product_based_report_db(start_date, end_date)
+            except sqlite3.Error as e:
+                 tkinter.messagebox.showerror("Database Error",
+                                             f"Could not retrieve report.\n\nDetails: {e}\n\nPlease ensure your SQLite version is up-to-date.")
+                 return
 
             grand_total = 0
             for product_name, total_qty, total_revenue in results:

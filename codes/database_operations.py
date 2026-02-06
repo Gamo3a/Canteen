@@ -232,8 +232,7 @@ def get_product_based_report_db(start_date: str, end_date: str) -> Union[List[Tu
         return cursor.fetchall()
     except sqlite3.Error as e:
         print(f"Product-based report error: {e}")
-        # The error is often caused by an older SQLite version.
-        # It's good practice to show a warning to the user in this case.
-        return f"ERROR: {e}"
+        # Propagate the error as a standard Exception catchable by the UI
+        raise sqlite3.Error(f"Database query failed: {e}")
     finally:
         conn.close()
