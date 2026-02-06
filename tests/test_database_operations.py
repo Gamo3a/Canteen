@@ -86,5 +86,18 @@ class TestDatabaseOperations(unittest.TestCase):
         details = json.loads(details_json)
         self.assertEqual(details["12345"]["isim"], "Test Prod")
 
+    def test_get_product_based_report(self):
+        # Setup data
+        cart = {"12345": {"isim": "Report Item", "fiyat": 100.0, "adet": 1}}
+        database_operations.save_sale_db(cart, 100.0)
+        
+        # Test report generation
+        today = date.today().strftime('%Y-%m-%d')
+        report = database_operations.get_product_based_report_db(today, today)
+        
+        self.assertIsInstance(report, list)
+        self.assertTrue(len(report) > 0)
+        self.assertEqual(report[0][0], "Report Item")
+
 if __name__ == '__main__':
     unittest.main()
