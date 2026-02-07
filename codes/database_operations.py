@@ -2,9 +2,12 @@ import sqlite3
 import json
 from datetime import date
 
+from typing import Optional, List, Tuple, Dict, Any, Union
+
 DATABASE_NAME = 'canteen.db'
 
-def create_connection():
+def create_connection() -> Optional[sqlite3.Connection]:
+    """Create a database connection to the SQLite database specified by DATABASE_NAME."""
     conn = None
     try:
         conn = sqlite3.connect(DATABASE_NAME)
@@ -43,7 +46,7 @@ def create_tables():
             conn.close()
 
 
-def save_sale_db(cart, total_amount):
+def save_sale_db(cart: Dict[str, Dict[str, Any]], total_amount: float) -> bool:
     """Adds the confirmed cart as a single record to the 'sales' table."""
     conn = create_connection()
     if conn is not None:
@@ -69,7 +72,7 @@ def save_sale_db(cart, total_amount):
             conn.close()
     return False
 
-def add_product_db(barcode, product_name, price, stock=0):
+def add_product_db(barcode: str, product_name: str, price: float, stock: int = 0) -> bool:
     conn = create_connection()
     if conn is not None:
         try:
@@ -86,7 +89,7 @@ def add_product_db(barcode, product_name, price, stock=0):
             conn.close()
     return False
 
-def get_product_info_db(barcode):
+def get_product_info_db(barcode: str) -> Optional[Tuple[str, str, float, int]]:
     conn = create_connection()
     if conn is not None:
         try:
@@ -101,7 +104,7 @@ def get_product_info_db(barcode):
             conn.close()
     return None
 
-def get_all_products_db():
+def get_all_products_db() -> Optional[List[Tuple[str, str, float, int]]]:
     conn = create_connection()
     if conn is not None:
         try:
@@ -116,7 +119,7 @@ def get_all_products_db():
             conn.close()
     return None
 
-def update_product_db(barcode, product_name=None, price=None, stock=None):
+def update_product_db(barcode: str, product_name: Optional[str] = None, price: Optional[float] = None, stock: Optional[int] = None) -> bool:
     conn = create_connection()
     if conn is not None:
         try:
@@ -147,7 +150,7 @@ def update_product_db(barcode, product_name=None, price=None, stock=None):
             conn.close()
     return False
 
-def delete_product_db(barcode):
+def delete_product_db(barcode: str) -> bool:
     conn = create_connection()
     if conn is not None:
         try:
@@ -163,7 +166,7 @@ def delete_product_db(barcode):
             conn.close()
     return False
 
-def get_all_sales_db():
+def get_all_sales_db() -> List[Tuple[int, str, float]]:
     """Fetches all main sale records from the 'sales' table."""
     conn = create_connection()
     if conn is not None:
@@ -179,7 +182,7 @@ def get_all_sales_db():
             conn.close()
     return []
 
-def get_sale_details_db(sale_id):
+def get_sale_details_db(sale_id: int) -> Optional[str]:
     """Returns the JSON formatted cart contents for the given ID."""
     conn = create_connection()
     if conn is not None:
@@ -197,7 +200,7 @@ def get_sale_details_db(sale_id):
     return None
 
 
-def get_product_based_report_db(start_date, end_date):
+def get_product_based_report_db(start_date: str, end_date: str) -> Union[List[Tuple[str, int, float]], str]:
     """
     Calculates the total quantity sold and total revenue for each product
     within the specified date range.
