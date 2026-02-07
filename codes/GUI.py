@@ -4,6 +4,7 @@ import tkinter.messagebox
 from tkinter import ttk
 from tkcalendar import DateEntry
 import json
+from typing import Optional, Tuple, Dict, Any, List
 
 # Import database functions
 from database_operations import (
@@ -15,10 +16,20 @@ from database_operations import (
 
 
 class CanteenInterface:
-    def __init__(self, master):
+    """
+    The main GUI class for the Canteen Application.
+    Handles all user interactions, window management, and interfacing with the database.
+    """
+    def __init__(self, master: ctk.CTk) -> None:
+        """
+        Initialize the main application window.
+
+        Args:
+            master (ctk.CTk): The root window object.
+        """
         self.master = master
         master.title("Canteen Application")
-        self.columns = ("Barcode", "Product Name", "Price (TL)", "Stock")
+        self.columns: Tuple[str, ...] = ("Barcode", "Product Name", "Price (TL)", "Stock")
 
         # A main frame to hold the buttons
         main_frame = ctk.CTkFrame(master)
@@ -42,7 +53,11 @@ class CanteenInterface:
                                       hover_color="#B71C1C")
         self.btn_exit.pack(pady=10, padx=10, fill="x")
 
-    def view_sales_interface(self):
+    def view_sales_interface(self) -> None:
+        """
+        Opens the Sales Reports window.
+        Allows users to view past sales receipts and generate product-based performance reports.
+        """
         sales_window = ctk.CTkToplevel(self.master)
         sales_window.title("Sales Reports")
         sales_window.geometry("1024x768")
@@ -88,12 +103,17 @@ class CanteenInterface:
             details_tree.heading(col, text=text)
             details_tree.column(col, width=width)
 
-        def load_sales():
+        def load_sales() -> None:
+            """Fetches all sales from DB and populates the sales treeview."""
             for i in sales_tree.get_children(): sales_tree.delete(i)
             for sale_id, date, total in get_all_sales_db():
                 sales_tree.insert('', 'end', values=(sale_id, date, f"{total:.2f}"))
 
-        def show_sale_details(event):
+        def show_sale_details(event: tk.Event) -> None:
+            """
+            Event handler for selecting a sale from the list.
+            Displays the details (products) of the selected sale in the details treeview.
+            """
             for i in details_tree.get_children(): details_tree.delete(i)
             selected_items = sales_tree.selection()
             if not selected_items: return
@@ -127,7 +147,10 @@ class CanteenInterface:
         lbl_grand_total = ctk.CTkLabel(tab2, text="Grand Total Revenue: 0.00 TL", font=('Arial', 16, 'bold'))
         lbl_grand_total.pack(pady=10)
 
-        def get_product_report():
+        def get_product_report() -> None:
+            """
+            Generates and displays a report of sold products within the selected date range.
+            """
             for i in report_tree.get_children(): report_tree.delete(i)
             start_date = cal_start.get_date().strftime('%Y-%m-%d')
             end_date = cal_end.get_date().strftime('%Y-%m-%d')
@@ -148,7 +171,10 @@ class CanteenInterface:
         btn_get_report = ctk.CTkButton(top_frame_s2, text="Get Report", command=get_product_report)
         btn_get_report.pack(side='left', padx=20)
 
-    def add_product_interface(self):
+    def add_product_interface(self) -> None:
+        """
+        Opens the dialog window to add a new product to the inventory.
+        """
         add_product_window = ctk.CTkToplevel(self.master)
         add_product_window.title("Add New Product")
         add_product_window.geometry("600x400")
@@ -181,7 +207,8 @@ class CanteenInterface:
         ent_stock.insert(0, "0")
         ent_stock.grid(row=3, column=1, padx=20, pady=10, sticky='ew')
 
-        def process_add_product(event=None):
+        def process_add_product(event: Optional[tk.Event] = None) -> None:
+            """Validates input and saves the new product to the database."""
             barcode, product_name = ent_barcode.get(), ent_product_name.get()
             if not barcode or not product_name:
                 tkinter.messagebox.showerror("Error", "Barcode and Product Name fields cannot be empty.")
@@ -200,7 +227,11 @@ class CanteenInterface:
         btn_add.grid(row=4, column=0, columnspan=2, padx=20, pady=20, sticky='ew')
         add_product_window.bind("<Return>", process_add_product)
 
-    def pos_interface(self):
+    def pos_interface(self) -> None:
+        """
+        Opens the Point of Sale (POS) window.
+        Handles checking out items, managing the cart, and detecting barcodes.
+        """
         pos_window = ctk.CTkToplevel(self.master)
         pos_window.transient(self.master)
         pos_window.grab_set()
@@ -217,7 +248,10 @@ class CanteenInterface:
 
         pos_window.after(100, lambda: self.ent_barcode.focus_set())
 
-        self.cart = {}
+        pos_window.after(100, lambda: self.ent_barcode.focus_set())
+
+        # Cart structure: {barcode: {"isim": str, "fiyat": float, "adet": int}}
+        self.cart: Dict[str, Dict[str, Any]] = {}
         self.lbl_cart_total = ctk.CTkLabel(pos_window, text="Cart Total: 0.00 TL", font=("Arial", 22, "bold"))
         self.lbl_cart_total.pack(pady=10)
 
@@ -239,13 +273,18 @@ class CanteenInterface:
         self.ent_barcode.bind("<space>", self.add_to_cart)
         pos_window.bind("<Return>", self.confirm_sale)
 
-    def on_barcode_change(self, *args):
+    def on_barcode_change(self, *args: Any) -> None:
+        """Listener for barcode entry updates. Auto-adds product if 13 digits detected."""
         current_barcode = self.barcode_var.get()
         if len(current_barcode) == 13:
             print(f"13-digit barcode detected: {current_barcode}. Adding automatically...")
             self.add_to_cart(event=None)
 
-    def add_to_cart(self, event=None):
+    def add_to_cart(self, event: Optional[tk.Event] = None) -> None:
+        """
+        Adds a product to the cart based on the entered barcode.
+        Checks stock availability before adding.
+        """
         barcode = self.ent_barcode.get()
         self.ent_barcode.delete(0, ctk.END)
         if not barcode: return
@@ -264,7 +303,11 @@ class CanteenInterface:
         else:
             tkinter.messagebox.showerror("Error", "Product with this barcode not found.")
 
-    def remove_from_cart(self):
+    def remove_from_cart(self) -> None:
+        """
+        Removes the selected item from the shopping cart.
+        Decrements quantity if > 1, otherwise removes the item completely.
+        """
         try:
             selected_index = self.cart_listbox.curselection()[0]
         except IndexError:
@@ -286,7 +329,8 @@ class CanteenInterface:
                 del self.cart[barcode_to_remove]
             self.refresh_cart()
 
-    def refresh_cart(self):
+    def refresh_cart(self) -> None:
+        """Updates the cart listbox and total price label."""
         self.cart_listbox.delete(0, tk.END)
         total_price = 0
         for item in self.cart.values():
@@ -294,7 +338,11 @@ class CanteenInterface:
             self.cart_listbox.insert(tk.END, f"{item['isim']} - Adet: {item['adet']} - Fiyat: {item['fiyat']:.2f} TL")
         self.lbl_cart_total.configure(text=f"Cart Total: {total_price:.2f} TL")
 
-    def confirm_sale(self, event=None):
+    def confirm_sale(self, event: Optional[tk.Event] = None) -> None:
+        """
+        Finalizes the sale.
+        Updates stock in the database and records the sale transaction.
+        """
         if not self.cart:
             tkinter.messagebox.showerror("Error", "Cart is empty.")
             return
@@ -322,7 +370,11 @@ class CanteenInterface:
         self.refresh_cart()
         self.ent_barcode.focus_set()
 
-    def list_products_interface(self):
+    def list_products_interface(self) -> None:
+        """
+        Opens the Inventory Management window.
+        Lists all products and allows editing or deleting them.
+        """
         product_list_window = ctk.CTkToplevel(self.master)
         product_list_window.title("Inventory Management")
         product_list_window.geometry("1024x768")
@@ -351,14 +403,16 @@ class CanteenInterface:
         btn_delete = ctk.CTkButton(bottom_frame, text="Delete Selected Product", command=self.delete_selected_product,fg_color="#D32F2F", hover_color="#B71C1C")
         btn_delete.pack(pady=10)
 
-    def refresh_product_list(self):
+    def refresh_product_list(self) -> None:
+        """Refreshes the product treeview with the latest data from the database."""
         for i in self.product_table.get_children(): self.product_table.delete(i)
         products = get_all_products_db()
         if products:
             for barcode, product_name, price, stock in products:
                 self.product_table.insert("", tk.END, values=(barcode, product_name, f"{price:.2f}", stock))
 
-    def delete_selected_product(self):
+    def delete_selected_product(self) -> None:
+        """Deletes the selected product from the database after confirmation."""
         selected_items = self.product_table.selection()
         if not selected_items:
             tkinter.messagebox.showwarning("Warning", "Please select a product to delete.")
@@ -376,7 +430,11 @@ class CanteenInterface:
             else:
                 tkinter.messagebox.showerror("Error", "A database error occurred while deleting the product.")
 
-    def edit_cell(self, event):
+    def edit_cell(self, event: tk.Event) -> None:
+        """
+        Initiates inline editing of a product cell (Name, Price, or Stock).
+        Triggered by a double-click event on the treeview.
+        """
         if self.edit_entry:
             self.cancel_edit()
 
@@ -401,7 +459,11 @@ class CanteenInterface:
         self.edit_entry.bind("<FocusOut>", self.cancel_edit)
         self.edit_entry.bind("<Escape>", self.cancel_edit)
 
-    def save_edit(self, event):
+    def save_edit(self, event: tk.Event) -> None:
+        """
+        Saves the edited cell value to the database.
+        Validates the input before updating.
+        """
         if not self.editing_cell: return
 
         row_id, col_id, column_index = self.editing_cell
@@ -433,7 +495,8 @@ class CanteenInterface:
 
         self.cancel_edit()
 
-    def cancel_edit(self, event=None):
+    def cancel_edit(self, event: Optional[tk.Event] = None) -> None:
+        """Cancels the current editing operation and removes the entry widget."""
         if self.edit_entry:
             self.edit_entry.destroy()
             self.edit_entry = None
