@@ -6,5 +6,5 @@ if __name__ == "__main__":
     create_tables()
     root = ctk.CTk()
     root.geometry("400x500")
-    Interface = CanteenInterface(root)
+    interface = CanteenInterface(root)
     root.mainloop()
